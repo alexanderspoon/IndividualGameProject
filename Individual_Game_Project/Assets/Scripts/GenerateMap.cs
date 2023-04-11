@@ -10,9 +10,9 @@ public class GenerateMap : GameManager
     public float NonInteractableThreshold = .7f;
 
     //Distance between hexes
-    private float xOffset = .185f;
-    private float zOffset = .16f;
-    private float oddLayerOffset = .09f;
+    private float xOffset = 0.327f;
+    private float zOffset = 0.284f;
+    private float oddLayerOffset = 0.171f;
 
     public GameObject basicPrefab; 
     public GameObject mountainPrefab; 
@@ -38,7 +38,7 @@ public class GenerateMap : GameManager
     }
 
     //Creates data container
-    void CreateGrid(int width, int height) {
+    void CreateGrid(int height, int width) {
         hexGrid = new HexStruct[width, height];
     }
 
@@ -62,6 +62,7 @@ public class GenerateMap : GameManager
         int hex_id = 1;
 
         GameObject hexPrefab = basicPrefab;
+
 
         for (int z = 0; z < height; z++) {
 
@@ -101,5 +102,6 @@ public class GenerateMap : GameManager
 
             isOdd = !isOdd;
         }
+
     }
 }

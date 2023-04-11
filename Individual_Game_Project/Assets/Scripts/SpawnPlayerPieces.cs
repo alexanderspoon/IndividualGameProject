@@ -11,6 +11,8 @@ public class SpawnPlayerPieces : GameManager
 
     public GameObject pieceOrigin;
 
+    public Vector3 newPieceOffset;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +33,7 @@ public class SpawnPlayerPieces : GameManager
         for (int i = 0; i < pieces.Count; i++)
         {
             GameObject currentPiece = (GameObject)Instantiate(pieces[i], pieceOrigin.transform.position + xOffset, Quaternion.identity);
-            xOffset += new Vector3(.2f,0,0);
+            xOffset += newPieceOffset;
             currentPiece.transform.SetParent(this.transform);
 
             PieceStruct pieceObj = new PieceStruct();
