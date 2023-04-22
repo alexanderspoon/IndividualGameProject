@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6782275361353567625}
   - component: {fileID: 219433062055345826}
   m_Layer: 0
-  m_Name: Cavalry
+  m_Name: Ninja
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -87,8 +87,12 @@ public class GenerateMap : GameManager
                     hexPrefab = basicPrefab;
                 }
 
-                GameObject currentHex = (GameObject)Instantiate(hexPrefab, hexPos, Quaternion.identity);
+                GameObject currentHex = (GameObject)Instantiate(hexPrefab, hexPos, Quaternion.Euler(270f, 0f, 0f));
                 hexObj.hexGameObject = currentHex;
+
+                if(hexObj.interactible == false) {
+                    currentHex.transform.position += new Vector3 (0,.02f,0);
+                }
 
                 hexPos += new Vector3 (xOffset,0,0);
                 currentHex.transform.SetParent(this.transform);
