@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class SpawnPlayerPieces : GameManager
 {
-    public GameObject archerPrefab;
-    public GameObject samuraiPrefab;
-    public GameObject cavalryPrefab;
-    public GameObject spearPrefab;
+    public PieceSO samuraiPrefab;
+    public PieceSO ninjaPrefab;
+    public PieceSO spearPrefab;
 
     public GameObject pieceOrigin;
 
@@ -16,7 +15,7 @@ public class SpawnPlayerPieces : GameManager
     // Start is called before the first frame update
     void Start()
     {
-        List<GameObject> piecesToSpawn = new List<GameObject> {archerPrefab, spearPrefab, samuraiPrefab, spearPrefab};
+        List<PieceSO> piecesToSpawn = new List<PieceSO> {ninjaPrefab, spearPrefab, samuraiPrefab};
 
         CreatePieceContainer();
         SpawnPieces(piecesToSpawn);
@@ -26,22 +25,31 @@ public class SpawnPlayerPieces : GameManager
         playerPieces = new List<PieceStruct>();
     }
 
-    void SpawnPieces(List<GameObject> pieces) {
+    void SpawnPieces(List<PieceSO> pieces) {
 
         Vector3 xOffset = new Vector3(0,0,0); 
 
         for (int i = 0; i < pieces.Count; i++)
         {
-            GameObject currentPiece = (GameObject)Instantiate(pieces[i], pieceOrigin.transform.position + xOffset, Quaternion.identity);
+            GameObject currentPiece = (GameObject)Instantiate(pieces[i].prefab, pieceOrigin.transform.position + xOffset, Quaternion.identity);
             xOffset += newPieceOffset;
             currentPiece.transform.SetParent(this.transform);
 
-            PieceStruct pieceObj = new PieceStruct();
-            pieceObj.hexLocation = hexGrid[i,0]; //This will break if there are more pieces than hexes in the row
-            pieceObj.pieceGameObject = currentPiece;
-            pieceObj.playerControllable = true;
+            PieceStruct pieceStr = new PieceStruct();
+            pieceStr.pieceGameObject = currentPiece;
+            pieceStr.hexLocation = hexGrid[0,0];
+            pieceStr.turnOver = false;
 
-            playerPieces.Add(pieceObj);
+            pieceStr.range = pieces[i].range;
+            pieceStr.currentHealth = pieces[i].health;
+            pieceStr.diceAmount = pieces[i].damage;
+
+            pieceStr.animationName = pieces[i].animationName;
+
+            currentPiece.GetComponent<PieceReference>().pieceSO = pieces[i];
+            currentPiece.GetComponent<PieceReference>().pieceStruct = pieceStr;
+
+            playerPieces.Add(pieceStr);
         }
     }
 }

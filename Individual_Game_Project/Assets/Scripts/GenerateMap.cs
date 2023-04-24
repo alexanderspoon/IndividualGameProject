@@ -9,6 +9,21 @@ public class GenerateMap : GameManager
     public int mapHeight;
     public float NonInteractableThreshold = .7f;
 
+    private int[] CustomMap = new int[55] 
+    {
+        0, 0, 0, 0, 0, 
+         0, 0, 1, 0, 0,
+        1, 0, 0, 1, 0,
+         0, 0, 0, 1, 0,
+        0, 1, 0, 0, 0, 
+         1, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+         0, 0, 1, 1, 0,
+        0, 1, 0, 0, 0,
+         0, 0, 0, 0, 1,
+        0, 0, 1, 0, 0,
+    };
+
     //Distance between hexes
     private float xOffset = 0.327f;
     private float zOffset = 0.284f;
@@ -55,11 +70,12 @@ public class GenerateMap : GameManager
     //Generates hexes and data
     void InstantiateMap(int height, int width, Vector3 origin) {
 
+        int mapReaderIndex = 0;
+        
         Vector3 hexPos = origin;
         bool isOdd = false; 
-        float isInteractable = 0;
 
-        int hex_id = 1;
+        int hex_id = 0;
 
         GameObject hexPrefab = basicPrefab;
 
@@ -78,14 +94,14 @@ public class GenerateMap : GameManager
                 hexObj.arrayPos = new Vector2Int(x,z);
                 hexObj.odd = isOdd;
 
-                isInteractable = Random.Range(0, 1f);
-                if(isInteractable >= NonInteractableThreshold) {
+                if(CustomMap[mapReaderIndex] == 1) {
                     hexObj.interactible = false;
                     hexPrefab = mountainPrefab;
                 } else {
                     hexObj.interactible = true;
                     hexPrefab = basicPrefab;
                 }
+                mapReaderIndex++;
 
                 GameObject currentHex = (GameObject)Instantiate(hexPrefab, hexPos, Quaternion.Euler(270f, 0f, 0f));
                 hexObj.hexGameObject = currentHex;

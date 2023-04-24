@@ -5,15 +5,20 @@ using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
-    //There are 8 Audio mixes here.
     public AudioMixerSnapshot[] mixArray;
 
     private int currentIndex;
+    private float transitionTime;
 
-    public void ChangeMusic(int mixIndex, float transitionTime) {
-        if(currentIndex != mixIndex) {
-            mixArray[mixIndex].TransitionTo(transitionTime);
-            currentIndex = mixIndex;
+    void Start() {
+        currentIndex = 1;
+        transitionTime = 3f;
+    }
+
+    public void ChangeMusic() {
+        if(currentIndex < mixArray.Length) {
+            mixArray[currentIndex].TransitionTo(transitionTime);
+            currentIndex++;
         }
     }
 }

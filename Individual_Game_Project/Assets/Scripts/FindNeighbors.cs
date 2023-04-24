@@ -159,7 +159,7 @@ public class FindNeighbors : GameManager
     }
 
 
-    public List<HexStruct> SelectCircularNeighbors(HexStruct originHexStruct, int range, bool includeOrigin) {
+    public List<HexStruct> SelectCircularNeighbors(HexStruct originHexStruct, int range, bool includeOrigin, bool highlightHexes) {
 
         if(DoesHexExist(originHexStruct) == false) {
             return new List<HexStruct>();
@@ -197,6 +197,10 @@ public class FindNeighbors : GameManager
             list.Remove(originHexStruct);
         }
 
+        if(highlightHexes) {
+            HighlightHexes(list);
+        }
+        
         return list;
     }
 
@@ -239,10 +243,30 @@ public class FindNeighbors : GameManager
         int xPos = hex.arrayPos.x;
         int zPos = hex.arrayPos.y;
 
-        if(xPos > 0 && xPos < hexGrid.GetLength(0) && zPos > 0 && zPos < hexGrid.GetLength(0)) {
+        if(xPos >= 0 && xPos < hexGrid.GetLength(0) && zPos >= 0 && zPos < hexGrid.GetLength(1)) {
             return true;
         } else {
             return false;
         }
     }
+
+    void HighlightHexes(List<HexStruct> selectedHexes) {
+        RemoveHighlights();
+
+        for (int i = 0; i < selectedHexes.Count; i++)
+        {
+            Material hexMaterial = selectedHexes[i].hexGameObject.GetComponent<MeshRenderer>().material;
+            hexMaterial.SetFloat("_IsGlowing", 1);
+        }
+    }
+
+    void RemoveHighlights() {
+        for (int i = 0; i < hexGrid.GetLength(1); i++) {
+            for (int j = 0; j < hexGrid.GetLength(0); j++) {
+                Material hexMaterial = hexGrid[j,i].hexGameObject.GetComponent<MeshRenderer>().material;
+                hexMaterial.SetFloat("_IsGlowing", 0);
+            }
+        }
+    }
+
 }

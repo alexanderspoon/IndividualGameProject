@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12d72bab5a434e24e946268e47dad4b4, type: 3}
+  m_Name: EnemySamurai
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 6058434299525828629, guid: af777055bbbe71d429f373c5797ab10d, type: 3}
+  range: 2
+  damage: 2
+  health: 15
+  animationName: Samurai
