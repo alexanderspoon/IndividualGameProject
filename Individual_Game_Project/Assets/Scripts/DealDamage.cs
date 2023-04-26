@@ -39,6 +39,10 @@ public class DealDamage : GameManager
         Animator attackerAnimator = attackerStruct.pieceGameObject.GetComponentInChildren<Animator>();
         attackerAnimator.Play(attackerStruct.animationName);
 
+        AudioSource audioSource = attackerStruct.pieceGameObject.transform.GetChild(0).GetComponent<AudioSource>();
+        audioSource.pitch = (Random.Range(0.95f, 1.05f));
+        audioSource.Play();
+
         attackedStruct = attackedPiece.GetComponent<PieceReference>().pieceStruct;
         attackedPiece.GetComponent<PieceReference>().pieceStruct.currentHealth -= damage;
         attackedPiece.GetComponent<UpdatePieceInformation>().UpdatePieceStats();
@@ -47,13 +51,23 @@ public class DealDamage : GameManager
             audioManager.GetComponent<AudioManager>().ChangeMusic();
 
             if(attackedPiece.CompareTag("EnemyPiece")) {
-                playerPieces.Remove(attackedStruct);
+                enemyPieces.Remove(attackedStruct);
             }
             if(attackedPiece.CompareTag("PlayerPiece")) {
                 playerPieces.Remove(attackedStruct);
                 this.gameObject.GetComponent<SelectPiece>().selectedPiece = null;
             }
             Destroy(attackedPiece);
+            CheckWinLoss();
+        }
+    }
+
+    void CheckWinLoss() {
+        if(playerPieces.Count <= 0) {
+            this.gameObject.GetComponent<WinLossBehavior>().HandleWinLoss(false);
+        } 
+        if(enemyPieces.Count <= 0) {
+            this.gameObject.GetComponent<WinLossBehavior>().HandleWinLoss(true);
         }
     }
 

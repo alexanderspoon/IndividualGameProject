@@ -3,7 +3,8 @@ guid: 093e8f61f91566648b821ac43f0a6d81
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - clack: {fileID: 8300000, guid: 3f72d428746704349a0b57f02db1c60f, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

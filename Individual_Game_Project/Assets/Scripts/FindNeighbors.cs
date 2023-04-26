@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class FindNeighbors : GameManager
 {
+    public const string defaultColor = "blue";
+
+
     public List<HexStruct> SelectLinearNeighbors(HexStruct originHexStruct, int range, bool includeOrigin, string selection) {
 
         if(DoesHexExist(originHexStruct) == false) {
@@ -158,8 +161,7 @@ public class FindNeighbors : GameManager
         return selectedHexes;
     }
 
-
-    public List<HexStruct> SelectCircularNeighbors(HexStruct originHexStruct, int range, bool includeOrigin, bool highlightHexes) {
+    public List<HexStruct> SelectCircularNeighbors(HexStruct originHexStruct, int range, bool includeOrigin, bool highlightHexes, string highlightColor = defaultColor) {
 
         if(DoesHexExist(originHexStruct) == false) {
             return new List<HexStruct>();
@@ -198,7 +200,7 @@ public class FindNeighbors : GameManager
         }
 
         if(highlightHexes) {
-            HighlightHexes(list);
+            HighlightHexes(list, highlightColor);
         }
         
         return list;
@@ -250,13 +252,19 @@ public class FindNeighbors : GameManager
         }
     }
 
-    void HighlightHexes(List<HexStruct> selectedHexes) {
+    void HighlightHexes(List<HexStruct> selectedHexes, string highlightColor) {
         RemoveHighlights();
 
         for (int i = 0; i < selectedHexes.Count; i++)
         {
             Material hexMaterial = selectedHexes[i].hexGameObject.GetComponent<MeshRenderer>().material;
             hexMaterial.SetFloat("_IsGlowing", 1);
+
+            if(highlightColor == "blue") {
+                hexMaterial.SetColor("_HighlightColor", new Color(.23f, .49f, .51f, 1f));
+            } else {
+                hexMaterial.SetColor("_HighlightColor", new Color(.56f, .1f, .05f, 1f));
+            }
         }
     }
 

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class EndPieceTurn : MonoBehaviour
+public class EndPieceTurn : GameManager
 {
     private XRSocketInteractor socket;
     private GameObject interactionManager;
+    
+    public InteractionLayerMask noInteractionMask;
 
     void Start() {
         socket = GetComponent<XRSocketInteractor>();
@@ -21,7 +23,13 @@ public class EndPieceTurn : MonoBehaviour
 
             if(piece.CompareTag("PlayerPiece")) {
                 piece.GetComponent<PieceReference>().pieceStruct.turnOver = true;
-                interactionManager.GetComponent<TurnManager>().CheckForEndTurn();
+                piece.GetComponent<XRGrabInteractable>().interactionLayers = noInteractionMask;
+                if(enemyTurn == false) {
+                    interactionManager.GetComponent<TurnManager>().CheckForEndTurn();
+                }
+                AudioSource audioSource = piece.GetComponent<AudioSource>();
+                audioSource.pitch = (Random.Range(0.95f, 1.05f));
+                audioSource.Play();
             }
         }
 

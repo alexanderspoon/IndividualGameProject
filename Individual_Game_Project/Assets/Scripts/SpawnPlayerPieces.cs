@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpawnPlayerPieces : GameManager
 {
@@ -12,14 +13,33 @@ public class SpawnPlayerPieces : GameManager
 
     public Vector3 newPieceOffset;
 
+    List<PieceSO> piecesToSpawn; 
+
     // Start is called before the first frame update
     void Start()
     {
-        List<PieceSO> piecesToSpawn = new List<PieceSO> {ninjaPrefab, spearPrefab, samuraiPrefab};
-
+        DetermineLoadout();
         CreatePieceContainer();
         SpawnPieces(piecesToSpawn);
     }
+
+
+    void DetermineLoadout() {
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+
+        switch (sceneName) {
+            case "Kurikaesu":
+                piecesToSpawn = new List<PieceSO> {ninjaPrefab, spearPrefab, samuraiPrefab};
+                break;
+            case "LevelTwo":
+                piecesToSpawn = new List<PieceSO> {ninjaPrefab, spearPrefab, spearPrefab, samuraiPrefab};
+                break;
+            default:
+                break;
+        }
+    }
+
 
     void CreatePieceContainer() {
         playerPieces = new List<PieceStruct>();

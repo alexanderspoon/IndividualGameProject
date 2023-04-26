@@ -18,7 +18,11 @@ public class TurnManager : GameManager
 
     private Queue<PieceStruct> pieceQueue = new Queue<PieceStruct>();
 
+    public InteractionLayerMask pieceMask;
+    private XRSocketInteractor interactor;
+
     void AddEnemiesToQueue() {
+        enemyTurn = true;
         foreach (PieceStruct enemyStr in enemyPieces) {
             pieceQueue.Enqueue(enemyStr);
         }
@@ -31,19 +35,28 @@ public class TurnManager : GameManager
                 turnTracker++;
             }
         }
-
         if(turnTracker == playerPieces.Count) {
-            foreach (PieceStruct piece in playerPieces) {
-                piece.turnOver = false;
-            }
-
             AddEnemiesToQueue();
             MoveForwardInQueue();
         }
     }
 
+    void ReEnablePieces() {
+        foreach (PieceStruct piece in playerPieces) {
+            piece.turnOver = false;
+            piece.pieceGameObject.GetComponent<XRGrabInteractable>().interactionLayers = pieceMask;
+        }
+
+    }
+
     void MoveForwardInQueue() {
-        StartCoroutine(DoEnemyTurn(pieceQueue.Dequeue()));
+        if(pieceQueue.Count > 0) {
+            StartCoroutine(DoEnemyTurn(pieceQueue.Dequeue()));
+        } 
+    }
+
+    void StopCoroutine() {
+        StopCoroutine(DoEnemyTurn(null));
     }
 
     IEnumerator DoEnemyTurn(PieceStruct enemy) {
@@ -93,11 +106,11 @@ public class TurnManager : GameManager
             if(attackableEnemies.Count > 0) {
                 //Attack
                 int randomPiece = Random.Range(0, attackableEnemies.Count);
-
                 if(enemy.pieceGameObject != null) {
+                    RotatePiece(enemyLocation, enemy.pieceGameObject, attackableEnemies[randomPiece].hexLocation.hexGameObject);
                     this.gameObject.GetComponent<DealDamage>().InRangeToDamage(enemy.pieceGameObject, attackableEnemies[randomPiece].pieceGameObject);
+                    yield return new WaitForSeconds(4f);
                 }
-                yield return new WaitForSeconds(5f);
             } else {
                 if(playerPiecesInRange.Count > 0) {
                     //Move Towards Player If In Range
@@ -122,8 +135,10 @@ public class TurnManager : GameManager
                     foreach (HexStruct hex in hexesToRemove) {
                         surrondingHexes.Remove(hex);
                     }
-                    int randomHexIndex = Random.Range(0, surrondingHexes.Count); 
-                    MovePiece(enemyLocation, enemy.pieceGameObject, surrondingHexes[randomHexIndex].hexGameObject);
+                    if(surrondingHexes.Count > 0) {
+                        int randomHexIndex = Random.Range(0, surrondingHexes.Count); 
+                        MovePiece(enemyLocation, enemy.pieceGameObject, surrondingHexes[randomHexIndex].hexGameObject);
+                    }
                 } else {  
                     //Move Randomly in Range
                     if(hexesInRange.Count > 0) {
@@ -131,23 +146,60 @@ public class TurnManager : GameManager
                         MovePiece(enemyLocation, enemy.pieceGameObject, hexesInRange[randomHexIndex].hexGameObject);
                     }
                 }
-                yield return new WaitForSeconds(1.5f);
             }
         }
 
         if(pieceQueue.Count > 0) {
             MoveForwardInQueue();
+        } else {
+            ReEnablePieces();
+            enemyTurn = false;
+            StopCoroutine();
         }
+        
     }
 
-    private XRSocketInteractor interactor;
 
     void MovePiece(HexStruct currentHex, GameObject piece, GameObject targetHex) {
         if(piece != null && targetHex != null) {
+            AudioSource audioSource = piece.GetComponent<AudioSource>();
+            audioSource.pitch = (Random.Range(0.95f, 1.05f));
+            audioSource.Play();
+
+            RotatePiece(currentHex, piece, targetHex);
+
             interactor = currentHex.hexGameObject.GetComponent<XRSocketInteractor>();
-            interactor.enabled = false;
-            Invoke("EnableInteractor", .25f);
-            piece.transform.position = targetHex.transform.position + new Vector3(0,.1f,0);
+            if(interactor.enabled == true) {
+                interactor.enabled = false;
+                Invoke("EnableInteractor", .25f);
+            }
+
+            piece.transform.position = targetHex.transform.position + new Vector3(0,.15f,0);
+        }
+    }
+
+    void RotatePiece(HexStruct currentHex, GameObject piece, GameObject targetHex) {
+        
+        if (piece != null)
+        {   
+            interactor = currentHex.hexGameObject.GetComponent<XRSocketInteractor>();
+            if(interactor.enabled == true) {
+                interactor.enabled = false;
+                Invoke("EnableInteractor", .25f);
+            }
+
+            Transform target = targetHex.transform;
+            Vector3 direction = target.position - piece.transform.position;
+
+            direction.y = 0f;
+
+            if (direction.magnitude > 0f) {
+                direction.Normalize();
+            }
+
+            Quaternion rotation = Quaternion.LookRotation(direction);
+            piece.transform.rotation = Quaternion.Euler(0f, rotation.eulerAngles.y, 0f);
+            piece.transform.position = piece.transform.position + new Vector3(0,.15f,0);
         }
     }
 

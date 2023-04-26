@@ -1,28 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class GenerateMap : GameManager
+public class GenerateMap : Maps
 {
 
     public int mapWidth;
     public int mapHeight;
     public float NonInteractableThreshold = .7f;
-
-    private int[] CustomMap = new int[55] 
-    {
-        0, 0, 0, 0, 0, 
-         0, 0, 1, 0, 0,
-        1, 0, 0, 1, 0,
-         0, 0, 0, 1, 0,
-        0, 1, 0, 0, 0, 
-         1, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-         0, 0, 1, 1, 0,
-        0, 1, 0, 0, 0,
-         0, 0, 0, 0, 1,
-        0, 0, 1, 0, 0,
-    };
 
     //Distance between hexes
     private float xOffset = 0.327f;
@@ -31,8 +17,9 @@ public class GenerateMap : GameManager
 
     public GameObject basicPrefab; 
     public GameObject mountainPrefab; 
-
     public GameObject mapOrigin; 
+    
+    public int[] CustomMap;
 
     void Awake()
     {
@@ -67,9 +54,26 @@ public class GenerateMap : GameManager
         Debug.Log("------------------------");
     }
 
+    void FindMap() {
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+
+        switch (sceneName) {
+            case "Kurikaesu":
+                CustomMap = mapOne;
+                break;
+            case "LevelTwo":
+                CustomMap = mapTwo;
+                break;
+            default:
+                break;
+        }
+    }
+
     //Generates hexes and data
     void InstantiateMap(int height, int width, Vector3 origin) {
-
+        FindMap();
+        
         int mapReaderIndex = 0;
         
         Vector3 hexPos = origin;

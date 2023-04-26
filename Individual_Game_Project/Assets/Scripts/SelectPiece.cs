@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class SelectPiece : GameManager
 {
@@ -12,6 +13,10 @@ public class SelectPiece : GameManager
 
     public GameObject rhController; 
     public GameObject selectedPiece; 
+
+    public GameObject map; 
+
+    public InteractionLayerMask noInteractionMask;
 
     private void Awake() {
         primaryPressRef.action.started += ShootRaycast;
@@ -30,14 +35,16 @@ public class SelectPiece : GameManager
 
             DeselectAllPieces();
 
-            if(hitObject.CompareTag("PlayerPiece")) {
+            if(hitObject.CompareTag("PlayerPiece") && hitObject.GetComponent<PieceReference>().pieceStruct.turnOver == false) {
                 GameObject selector = hitObject.transform.Find("Selector").gameObject;
                 selector.GetComponent<MeshRenderer>().enabled = true;
                 selector.SetActive(true);
                 selectedPiece = hitObject;
+                map.GetComponent<FindNeighbors>().SelectCircularNeighbors(selectedPiece.GetComponent<PieceReference>().pieceStruct.hexLocation, 1, false, true, "red");
             }
 
             if(selectedPiece != null && hitObject.CompareTag("EnemyPiece")) {
+                selectedPiece.GetComponent<XRGrabInteractable>().interactionLayers = noInteractionMask;
                 StartCoroutine(ManageEnemyPlayerInteraction(hitObject));
             }
 
@@ -47,8 +54,10 @@ public class SelectPiece : GameManager
     IEnumerator ManageEnemyPlayerInteraction(GameObject enemy) {
         selectedPiece.GetComponent<PieceReference>().pieceStruct.turnOver = true;
         this.gameObject.GetComponent<DealDamage>().InRangeToDamage(selectedPiece, enemy);
-        yield return new WaitForSeconds(5.0f);
-        this.gameObject.GetComponent<TurnManager>().CheckForEndTurn();
+        yield return new WaitForSeconds(5.0f);                
+        if(enemyTurn == false) {
+            this.gameObject.GetComponent<TurnManager>().CheckForEndTurn();
+        }
     }
 
 

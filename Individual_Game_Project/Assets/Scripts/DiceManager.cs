@@ -12,7 +12,7 @@ public class DiceManager : MonoBehaviour
     private int damageInputamount;
 
     private Vector3 initalVelocity = new Vector3(0,-.05f,0); 
-
+    
     public void RollDice(int numDice) {
         totalDamage = 0;
         damageInputTotal = numDice;
@@ -21,6 +21,9 @@ public class DiceManager : MonoBehaviour
 
         for (int i = 0; i < numDice; i++) {
             GameObject die = Instantiate(diePrefab, diceOrigin.transform.position + offset, Random.rotation);
+            AudioSource audioSource = die.GetComponent<AudioSource>();
+            audioSource.pitch = (Random.Range(0.95f, 1.05f));
+            audioSource.Play();
             die.GetComponent<Rigidbody>().velocity = initalVelocity;
             offset += new Vector3(0,.1f,0);
         }
